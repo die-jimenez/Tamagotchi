@@ -1,3 +1,5 @@
+//patrón de "fluent interface" o "method chaining" como el de DOTween
+
 #ifndef __ANIMACION_H__
 #define __ANIMACION_H__
 
@@ -6,20 +8,27 @@
 
 class Animacion {
 private:
+  //Datos de la animacion
   const unsigned char** sprites;  //puntero doble
-  int frameRate;
-  int frameCount;
-  int currentFrame;
   int width, height;
+  int frameCount;
+  int frameRate;
+  float frameInterval;
+
+  //Variables
+  int posX, posY;
+  float time;
   bool isLoop;
   bool isPlaying;
-  int anim_length;
+  bool forceStop;
+  int currentFrame;
 
-  uint32_t frameInterval;
-  DeltaTime deltaTime;
+  //Funciones privadas
+  void SetPosition(int _x, int _y);
+
 
 public:
-  Animacion(const unsigned char* _sprites[], int _frameRate, int _width, int _height);
+  Animacion(const unsigned char* _sprites[], int _frameRate, int _frameCount, int _width, int _height);
   ~Animacion();
 
   // // Configuración básica
@@ -37,11 +46,18 @@ public:
   // void playSegment(uint16_t start, uint16_t end);
 
   // Actualización de animación
-  void play();
+  void Play(float _deltaTime);
+  void Stop();
+  void Pause();
+  void Continue();
+  void SetLoop(bool _isLoop);
 
   // Getters
   int GetWidth();
   int GetHeight();
+  int GetPosX();
+  int GetPosY();
+  const unsigned char* GetCurrentSprite();
   const unsigned char* GetSprite(int index);
 
   // uint16_t getCurrentFrameIndex();

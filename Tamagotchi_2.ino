@@ -21,7 +21,8 @@ Button buttonR(5, "RIGHT");   //3 y... 4
 
 #include "src/Animations/Egg.h"
 #include "animacion.h"
-Animacion egg_open(anim_egg_open, egg_framerate, egg_width, egg_height);
+Animacion egg_open(anim_egg_open, egg_framerate, egg_open_size, egg_width, egg_height);
+
 
 // //Colores
 // int WHITE = 1;
@@ -44,6 +45,8 @@ void setup() {
 
 void loop() {
   deltaTime.Run();
+  display.clearDisplay();
+
   buttonL.Update([]() {
     Serial.println("L");
     humanTime = 0;
@@ -55,10 +58,12 @@ void loop() {
     Serial.println("R");
   });
 
-
-  display.drawBitmap(0, 0, egg_open.GetSprite(0), egg_open.GetWidth(), egg_open.GetHeight(), WHITE);
-  display.fillRect(100, 10, 20, 15, SSD1306_WHITE);
-  display.fillCircle(70, 40, 10, SSD1306_WHITE);
+  egg_open.SetLoop(false);
+  PlayAnimation(egg_open, 50, 0, WHITE);
+  //egg_open.Play(30, 50, WHITE, deltaTime.Get());
+  //display.drawBitmap(0, 0, egg_open.GetSprite(0), egg_open.GetWidth(), egg_open.GetHeight(), WHITE);
+  // display.fillRect(100, 10, 20, 15, SSD1306_WHITE);
+  // display.fillCircle(70, 40, 10, SSD1306_WHITE);
 
 
   //ApplyGlobalDither();
@@ -67,6 +72,10 @@ void loop() {
   delay(10);
 }
 
+void PlayAnimation(Animacion& _anim, int16_t posX, int16_t posY, uint16_t color) {  //"&" es igual a "ref"
+  _anim.Play(deltaTime.Get());
+  display.drawBitmap(posX, posY, _anim.GetCurrentSprite(), _anim.GetWidth(), _anim.GetHeight(), color);
+}
 
 
 void OLEDInit() {
