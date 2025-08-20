@@ -1,5 +1,5 @@
 //https://javl.github.io/image2cpp/
-const int egg_framerate = 4;
+
 const int egg_width = 48;
 const int egg_height = 48;
 
@@ -83,13 +83,23 @@ const unsigned char egg_open_f4 [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x20, 0x22, 0x00, 0x00, 0x00, 0x00, 0x38, 0x04, 0x00, 0x00, 0x00, 0x00, 
 	0x7f, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x7f, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00
 };
-const int egg_open_size = 4;
-const unsigned char* anim_egg_open[egg_open_size] = {
+//Idle
+const int egg_idle_length = 2;
+const int egg_idle_framerate = 1;
+const unsigned char* anim_egg_idle[egg_idle_length] = {
+	egg_open_f1,
+	egg_open_f2,
+};
+//Open
+const int egg_open_length = 4;
+const int egg_open_framerate = 4;
+const unsigned char* anim_egg_open[egg_open_length] = {
 	egg_open_f1,
 	egg_open_f2,
   egg_open_f3,
   egg_open_f4
 };
+
 
 
 

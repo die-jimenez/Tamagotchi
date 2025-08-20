@@ -21,13 +21,8 @@ Button buttonR(5, "RIGHT");   //3 y... 4
 
 #include "src/Animations/Egg.h"
 #include "animacion.h"
-Animacion egg_open(anim_egg_open, egg_framerate, egg_open_size, egg_width, egg_height);
-
-
-// //Colores
-// int WHITE = 1;
-// int BLACK = 0;
-
+Animacion egg_open(&display, anim_egg_open, egg_open_length, egg_open_framerate, egg_width, egg_height);
+Animacion egg_idle(&display, anim_egg_idle, egg_idle_length, egg_idle_framerate, egg_width, egg_height);
 
 
 
@@ -40,7 +35,6 @@ void setup() {
   OLEDInit();
 
   Serial.println("setup terminado");
-  Serial.println(egg_framerate);
 }
 
 void loop() {
@@ -58,10 +52,18 @@ void loop() {
     Serial.println("R");
   });
 
-  egg_open.SetLoop(false);
-  PlayAnimation(egg_open, 50, 0, WHITE);
-  //egg_open.Play(30, 50, WHITE, deltaTime.Get());
-  //display.drawBitmap(0, 0, egg_open.GetSprite(0), egg_open.GetWidth(), egg_open.GetHeight(), WHITE);
+  egg_idle.Play(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE, deltaTime.Get())
+    .OnStart([]() {
+      Serial.println("Inicio");
+    })
+    .OnLoop([]() {
+      Serial.println("Loop");
+    })
+    .OnComplete([]() {
+      Serial.println("Termino");
+    });
+  ;
+
   // display.fillRect(100, 10, 20, 15, SSD1306_WHITE);
   // display.fillCircle(70, 40, 10, SSD1306_WHITE);
 
@@ -70,11 +72,6 @@ void loop() {
   humanTime = humanTime + deltaTime.Get();
   display.display();
   delay(10);
-}
-
-void PlayAnimation(Animacion& _anim, int16_t posX, int16_t posY, uint16_t color) {  //"&" es igual a "ref"
-  _anim.Play(deltaTime.Get());
-  display.drawBitmap(posX, posY, _anim.GetCurrentSprite(), _anim.GetWidth(), _anim.GetHeight(), color);
 }
 
 
