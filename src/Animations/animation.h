@@ -1,23 +1,22 @@
 //patrón de "fluent interface" o "method chaining" como el de DOTween
-
 //Eventos personalizados añadadibles por play.On...
 // OnStart
 // OnComplete
 // OnFrameChange(int frame)
 // OnLoop
 
-#ifndef __ANIMACION_H__
-#define __ANIMACION_H__
+#ifndef __ANIMATION_H__
+#define __ANIMATION_H__
 
 #include <Arduino.h>
 #include <Adafruit_SSD1306.h>
-#include "src/DeltaTime/DeltaTime.h"
+#include "../DeltaTime/DeltaTime.h"
 //Lo declaro antes para poder usarlo en la Clase "Animacion"
-class AnimacionPlayback;
+class AnimationPlayback;
 
 
 
-class Animacion {
+class Animation {
 private:
   //Datos de la animacion
   const unsigned char** sprites;  //puntero doble
@@ -44,8 +43,6 @@ private:
   std::function<void(int)> onFrameChangeCallback;
   std::function<void()> onLoopCallback;
 
-  //Funciones privadas
-  void SetPosition(int _x, int _y);
   //Triggers de eventos
   void TriggerOnComplete();
   void TriggerOnStart();
@@ -57,11 +54,11 @@ private:
 
 
 public:
-  Animacion(Adafruit_SSD1306* display, const unsigned char* _sprites[], int _frameCount, int _frameRate, int _width, int _height);
-  ~Animacion();
+  Animation(Adafruit_SSD1306* display, const unsigned char* _sprites[], int _frameCount, int _frameRate, int _width, int _height);
+  ~Animation();
 
   //Devuelve un AnimacionPlayBack para poder agregar los eventos como DotWeen
-  AnimacionPlayback Play(int16_t posX, int16_t posY, uint16_t color, float _deltaTime);
+  AnimationPlayback Play(uint16_t color, float _deltaTime);
 
   //Cambios en la ejecucion de la animacion
   //void Play(float _deltaTime);
@@ -70,6 +67,7 @@ public:
   void Continue();
   void SetLoop(bool _isLoop);
   void SetCenterMode(bool _val);
+  void SetPosition(int _x, int _y);
 
   // Getters
   int GetWidth();
@@ -79,7 +77,7 @@ public:
   const unsigned char* GetCurrentSprite();
   const unsigned char* GetSprite(int index);
 
-  //Eventos 
+  //Eventos
   void SetOnComplete(std::function<void()> action) {
     onCompleteCallback = action;
   }
@@ -92,49 +90,49 @@ public:
   void SetOnLoop(std::function<void()> action) {
     onLoopCallback = action;
   }
-
 };
 
 
 
 
 // Clase para el fluent interface
-class AnimacionPlayback {
+class AnimationPlayback {
 private:
-  Animacion* animacion;
-  
+  Animation* animation;
+
 public:
   //Constructor + "animacion(anim)" que inicializa el puntero "Animacion*" (* : Indica que es un puntero)
-  AnimacionPlayback(Animacion* anim) : animacion(anim) {}
-  
+  AnimationPlayback(Animation* anim)
+    : animation(anim) {}
+
   // Método para asignar callback cuando se completa la animación
-  AnimacionPlayback& OnComplete(std::function<void()> action) {
-    if (animacion) {
-      animacion->SetOnComplete(action);
+  AnimationPlayback& OnComplete(std::function<void()> action) {
+    if (animation) {
+      animation->SetOnComplete(action);
     }
     return *this;
   }
-  
+
   // Método para asignar callback cuando inicia la animación
-  AnimacionPlayback& OnStart(std::function<void()> action) {
-    if (animacion) {
-      animacion->SetOnStart(action);
+  AnimationPlayback& OnStart(std::function<void()> action) {
+    if (animation) {
+      animation->SetOnStart(action);
     }
     return *this;
   }
-  
+
   // Método para asignar callback cuando cambia de frame
-  AnimacionPlayback& OnFrameChange(std::function<void(int)> action) {
-    if (animacion) {
-      animacion->SetOnFrameChange(action);
+  AnimationPlayback& OnFrameChange(std::function<void(int)> action) {
+    if (animation) {
+      animation->SetOnFrameChange(action);
     }
     return *this;
   }
-  
+
   // Método para asignar callback cuando se reinicia el loop
-  AnimacionPlayback& OnLoop(std::function<void()> action) {
-    if (animacion) {
-      animacion->SetOnLoop(action);
+  AnimationPlayback& OnLoop(std::function<void()> action) {
+    if (animation) {
+      animation->SetOnLoop(action);
     }
     return *this;
   }

@@ -1,7 +1,7 @@
-#include "animacion.h"
-#include "src/DeltaTime/DeltaTime.h"
+#include "animation.h"
+#include "../DeltaTime/DeltaTime.h"
 
-Animacion::Animacion(Adafruit_SSD1306* _display, const unsigned char* _sprites[], int _frameCount, int _frameRate, int _width, int _height) {
+Animation::Animation(Adafruit_SSD1306* _display, const unsigned char* _sprites[], int _frameCount, int _frameRate, int _width, int _height) {
   display = _display;
   sprites = _sprites;
   //Compruebo que los datos son correctos
@@ -14,19 +14,22 @@ Animacion::Animacion(Adafruit_SSD1306* _display, const unsigned char* _sprites[]
   isLoop = true;
   isPlaying = false;
   forceStop = false;
+  currentFrame = 0;
+  time = 0.0f;
+  hasCompleted = false;
+  areEventsLoaded = false;
 
   //Variable configuradas
   frameInterval = 1.0 / frameRate;
 }
 
-
-Animacion::~Animacion() {
+Animation::~Animation() {
 }
 
-AnimacionPlayback Animacion::Play(int16_t _posX, int16_t _posY, uint16_t _color, float _deltaTime) {
+AnimationPlayback Animation::Play(uint16_t _color, float _deltaTime) {
   //Detiene la ejecucion
-  if (forceStop) return AnimacionPlayback(this);
-  if (currentFrame >= frameCount) return AnimacionPlayback(this);
+  if (forceStop) return AnimationPlayback(this);
+  if (currentFrame >= frameCount) return AnimationPlayback(this);
 
   //Espera que se carguen los eventos tras la primera ejecucion
   //Explicacion: "animacion.Play(x).OnStart(...)" Ejecuta primero solo "animacion.Play(x)" y despues carga los eventos. Asi que estos funcionan en la segunda ejecucion
@@ -35,11 +38,13 @@ AnimacionPlayback Animacion::Play(int16_t _posX, int16_t _posY, uint16_t _color,
     hasCompleted = false;
     TriggerOnStart();
   }
+  
   //Cambio de frame
   if (time >= frameInterval) {
     time = 0;
     currentFrame++;
-    SetPosition(_posX, _posY);
+    TriggerOnFrameChange(currentFrame);
+    
     //Reinicia o acaba la animacion
     if (currentFrame >= frameCount) {
       if (isLoop) {
@@ -54,16 +59,16 @@ AnimacionPlayback Animacion::Play(int16_t _posX, int16_t _posY, uint16_t _color,
       }
     }
   }
+  
   time = time + _deltaTime;
   //Este display es un puntero del "display" en el .ino. "->" hace que se trabaje con el "display" real y no con el puntero
   display->drawBitmap(posX, posY, GetCurrentSprite(), GetWidth(), GetHeight(), _color);
+  
   if (!areEventsLoaded) areEventsLoaded = true;
-  return AnimacionPlayback(this);
+  return AnimationPlayback(this);
 }
 
-
-
-void Animacion::Stop() {
+void Animation::Stop() {
   time = 0;
   currentFrame = 0;
   isPlaying = false;
@@ -72,22 +77,20 @@ void Animacion::Stop() {
   forceStop = true;
 }
 
-void Animacion::Pause() {
+void Animation::Pause() {
   isPlaying = false;
   forceStop = true;
 }
 
-void Animacion::Continue() {
+void Animation::Continue() {
   forceStop = false;
 }
 
-void Animacion::SetLoop(bool _isLoop) {
+void Animation::SetLoop(bool _isLoop) {
   isLoop = _isLoop;
 }
 
-
-
-void Animacion::SetPosition(int _x, int _y) {
+void Animation::SetPosition(int _x, int _y) {
   if (isCenterMode) {
     posX = _x - GetWidth() / 2;
     posY = _y - GetHeight() / 2;
@@ -97,54 +100,54 @@ void Animacion::SetPosition(int _x, int _y) {
   }
 }
 
-void Animacion::SetCenterMode(bool _val) {
+void Animation::SetCenterMode(bool _val) {
   isCenterMode = _val;
 }
 
-int Animacion::GetWidth() {
+int Animation::GetWidth() {
   return width;
 }
 
-int Animacion::GetHeight() {
+int Animation::GetHeight() {
   return height;
 }
 
-int Animacion::GetPosX() {
+int Animation::GetPosX() {
   return posX;
 }
 
-int Animacion::GetPosY() {
+int Animation::GetPosY() {
   return posY;
 }
 
-const unsigned char* Animacion::GetCurrentSprite() {
+const unsigned char* Animation::GetCurrentSprite() {
   return sprites[currentFrame];
 }
 
-const unsigned char* Animacion::GetSprite(int index) {
+const unsigned char* Animation::GetSprite(int index) {
   return sprites[index];
 }
 
 // Métodos privados para disparar callbacks
-void Animacion::TriggerOnComplete() {
+void Animation::TriggerOnComplete() {
   if (onCompleteCallback) {
     onCompleteCallback();
   }
 }
 
-void Animacion::TriggerOnStart() {
+void Animation::TriggerOnStart() {
   if (onStartCallback) {
     onStartCallback();
   }
 }
 
-void Animacion::TriggerOnFrameChange(int frame) {
+void Animation::TriggerOnFrameChange(int frame) {
   if (onFrameChangeCallback) {
     onFrameChangeCallback(frame);
   }
 }
 
-void Animacion::TriggerOnLoop() {
+void Animation::TriggerOnLoop() {
   if (onLoopCallback) {
     onLoopCallback();
   }

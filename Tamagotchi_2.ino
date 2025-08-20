@@ -18,11 +18,14 @@ Button buttonL(7, "LEFT");    //0
 Button buttonC(6, "CENTER");  //1
 Button buttonR(5, "RIGHT");   //3 y... 4
 
-
-#include "src/Animations/Egg.h"
-#include "animacion.h"
-Animacion egg_open(&display, anim_egg_open, egg_open_length, egg_open_framerate, egg_width, egg_height);
-Animacion egg_idle(&display, anim_egg_idle, egg_idle_length, egg_idle_framerate, egg_width, egg_height);
+#include "src/Animations/animationManager.h"
+#include "src/Animations/animation.h"
+#include "src/Animations/egg.h"
+#include "src/Animations/eye.h"
+AnimationManager animationManager(&display);
+Animation egg_idle(&display, anim_egg_idle, egg_idle_length, egg_idle_framerate, egg_width, egg_height);
+Animation egg_open(&display, anim_egg_open, egg_open_length, egg_open_framerate, egg_width, egg_height);
+Animation eye(&display, anim_eye, eye_length, eye_framerate, eye_width, eye_height);
 
 
 
@@ -32,9 +35,24 @@ void setup() {
   buttonC.Init();
   buttonR.Init();
 
+  //Esta funcion tarda en completarse, hay que darle un delay
   OLEDInit();
+  delay(1000);
+  Serial.println("Configuración terminada");
 
-  Serial.println("setup terminado");
+
+  //---> Aquí ya se pueden sumar las animaciones iniciales
+  egg_idle.SetPosition(SCREEN_WIDTH / 2, 0);
+  //animationManager.Add(&egg_idle);
+  //animationManager.Remove(&egg_idle);
+  //animationManager.PlayOneShot(&eye);
+
+  //Secuencia de ejemplos
+
+  animationManager.PlayOneShot(&eye);
+    eye.SetOnComplete([]() {
+    animationManager.Add(&egg_idle);
+  });
 }
 
 void loop() {
@@ -43,6 +61,8 @@ void loop() {
 
   buttonL.Update([]() {
     Serial.println("L");
+    egg_idle.Stop();
+    animationManager.PlayOneShot(&egg_open);
     humanTime = 0;
   });
   buttonC.Update([]() {
@@ -52,23 +72,26 @@ void loop() {
     Serial.println("R");
   });
 
-  egg_idle.Play(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE, deltaTime.Get())
-    .OnStart([]() {
-      Serial.println("Inicio");
-    })
-    .OnLoop([]() {
-      Serial.println("Loop");
-    })
-    .OnComplete([]() {
-      Serial.println("Termino");
-    });
-  ;
+  //eye.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+  //eye.Play(WHITE, deltaTime.Get());
+  // egg_idle.Play(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE, deltaTime.Get())
+  //   .OnStart([]() {
+  //     Serial.println("Inicio");
+  //   })
+  //   .OnLoop([]() {
+  //     Serial.println("Loop");
+  //   })
+  //   .OnComplete([]() {
+  //     Serial.println("Termino");
+  //   });
+  // ;
 
   // display.fillRect(100, 10, 20, 15, SSD1306_WHITE);
   // display.fillCircle(70, 40, 10, SSD1306_WHITE);
 
 
   //ApplyGlobalDither();
+  animationManager.Update(deltaTime.Get());
   humanTime = humanTime + deltaTime.Get();
   display.display();
   delay(10);
