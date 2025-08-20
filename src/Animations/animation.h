@@ -42,12 +42,16 @@ private:
   std::function<void()> onStartCallback;
   std::function<void(int)> onFrameChangeCallback;
   std::function<void()> onLoopCallback;
+  std::function<void()> onAfterOnCompleteCallback;
+
 
   //Triggers de eventos
   void TriggerOnComplete();
   void TriggerOnStart();
   void TriggerOnFrameChange(int frame);
   void TriggerOnLoop();
+  //Solo se utiliza para el PlayOneShot del aniamtionManager
+  void TriggerOnAfterOnComplete();
 
 
 
@@ -89,6 +93,10 @@ public:
   }
   void SetOnLoop(std::function<void()> action) {
     onLoopCallback = action;
+  }
+  //Solo se utiliza para el PlayOneShot del aniamtionManager
+  void SetAfterOnComplete(std::function<void()> action) {
+    onAfterOnCompleteCallback = action;
   }
 };
 
@@ -133,6 +141,14 @@ public:
   AnimationPlayback& OnLoop(std::function<void()> action) {
     if (animation) {
       animation->SetOnLoop(action);
+    }
+    return *this;
+  }
+
+    // Método para asignar callback cuando se completa la animación
+  AnimationPlayback& AfterOnComplete(std::function<void()> action) {
+    if (animation) {
+      animation->SetAfterOnComplete(action);
     }
     return *this;
   }

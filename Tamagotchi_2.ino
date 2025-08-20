@@ -50,7 +50,7 @@ void setup() {
   //Secuencia de ejemplos
 
   animationManager.PlayOneShot(&eye);
-    eye.SetOnComplete([]() {
+  eye.SetOnComplete([]() {
     animationManager.Add(&egg_idle);
   });
 }

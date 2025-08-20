@@ -38,13 +38,13 @@ AnimationPlayback Animation::Play(uint16_t _color, float _deltaTime) {
     hasCompleted = false;
     TriggerOnStart();
   }
-  
+
   //Cambio de frame
   if (time >= frameInterval) {
     time = 0;
     currentFrame++;
     TriggerOnFrameChange(currentFrame);
-    
+
     //Reinicia o acaba la animacion
     if (currentFrame >= frameCount) {
       if (isLoop) {
@@ -55,15 +55,16 @@ AnimationPlayback Animation::Play(uint16_t _color, float _deltaTime) {
         if (!hasCompleted) {
           hasCompleted = true;
           TriggerOnComplete();
+          TriggerOnAfterOnComplete();
         }
       }
     }
   }
-  
+
   time = time + _deltaTime;
   //Este display es un puntero del "display" en el .ino. "->" hace que se trabaje con el "display" real y no con el puntero
   display->drawBitmap(posX, posY, GetCurrentSprite(), GetWidth(), GetHeight(), _color);
-  
+
   if (!areEventsLoaded) areEventsLoaded = true;
   return AnimationPlayback(this);
 }
@@ -150,5 +151,11 @@ void Animation::TriggerOnFrameChange(int frame) {
 void Animation::TriggerOnLoop() {
   if (onLoopCallback) {
     onLoopCallback();
+  }
+}
+
+void Animation::TriggerOnAfterOnComplete() {
+  if (onAfterOnCompleteCallback) {
+    onAfterOnCompleteCallback();
   }
 }

@@ -19,8 +19,8 @@ void AnimationManager::Add(Animation* _anim) {
   for (int i = 0; i < maxAnimations; i++) {
     if (!isEmptyAnimation(i)) continue;
     animations[i] = _anim;
-    Serial.print("-AnimationManager: Se guardo una animacion en la posicion ");
-    Serial.println(i);
+    // Serial.print("-AnimationManager: Se guardo una animacion en la posicion ");
+    // Serial.println(i);
     return;
   }
 }
@@ -31,8 +31,8 @@ void AnimationManager::Remove(Animation* _anim) {
     if (animations[i] == _anim) {
       animations[i]->Stop();
       animations[i] = nullptr;
-      Serial.print("-AnimationManager: Se elimino la animacion en la posicion ");
-      Serial.println(i);
+      // Serial.print("-AnimationManager: Se elimino la animacion en la posicion ");
+      // Serial.println(i);
       return;
     }
   }
@@ -51,8 +51,9 @@ void AnimationManager::PlayOneShot(Animation* _anim) {
 
   //La función anonima no tiene acceso a la variables de la función por defecto.
   //"[_anim, this]": Primero agarra la ref de "_anim" y luego con "this" toma la referencia de la calse
-  _anim->SetOnComplete([_anim, this]() {
+  _anim->SetAfterOnComplete([_anim, this]() {
     this->Remove(_anim);
+    Serial.println("Termino playOneShot");
   });
 }
 
