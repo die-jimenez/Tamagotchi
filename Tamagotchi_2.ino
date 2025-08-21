@@ -1,6 +1,10 @@
 #include <Arduino.h>
 #include <functional>  // Necesario para std::function
 
+String state = "credits"
+  //egg_screen
+  ;
+
 
 //Libreria de dibujo: Codigo extraido de: https://github.com/FluxGarage/RoboEyes
 #include <Adafruit_SSD1306.h>
@@ -18,8 +22,8 @@ Button buttonL(7, "LEFT");    //0
 Button buttonC(6, "CENTER");  //1
 Button buttonR(5, "RIGHT");   //3 y... 4
 
-#include "src/Animations/animationManager.h"
-#include "src/Animations/animation.h"
+#include "src/AnimationManager/animationManager.h"
+#include "src/AnimationManager/animation.h"
 #include "src/Animations/egg.h"
 #include "src/Animations/eye.h"
 AnimationManager animationManager(&display);
@@ -60,6 +64,25 @@ void setup() {
 void loop() {
   deltaTime.Run();
   display.clearDisplay();
+
+  if (state == "credits") {
+    DrawTextInRect("Creado por: ", 0, 0, 1);
+    display.setCursor(0, 15);
+    display.print("Diego Jimenez");
+    display.display();
+    delay(5000);
+    display.clearDisplay();
+    delay(3000);
+    state = "start";
+  }
+
+
+
+
+
+
+
+
 
   buttonL.Update([]() {
     Serial.println("L");
@@ -125,6 +148,21 @@ void DrawCircle(int x, int y, int radio, uint8_t brightness) {
   }
 }
 
+void DrawTextInRect(String _text, int _posX, int _posY, float _textSize) {
+  // Calcular dimensiones del rectángulo
+  int textWidth = _text.length() * 6 * _textSize;  // Aproximado: 6 píxeles por carácter
+  int textHeight = 8 * _textSize;                  // 8 píxeles de altura para tamaño 1
+  int padding = 3;                                 // Espacio interno del recuadro
+
+  // Dibujar rectángulo
+  display.drawRect(_posX - padding, _posY - padding,
+                   textWidth + (padding * 2), textHeight + (padding * 2), WHITE);
+
+  // Dibujar texto
+  display.setCursor(_posX, _posY);
+  display.setTextSize(_textSize);
+  display.print(_text);
+}
 
 void funcionesDibujado() {
   // 1. FUNCIONES BÁSICAS

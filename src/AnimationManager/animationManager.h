@@ -9,7 +9,6 @@
 #include <Arduino.h>
 #include "animation.h"
 #include <Adafruit_SSD1306.h>
-#include "src/DeltaTime/DeltaTime.h"
 
 
 class AnimationManager {
