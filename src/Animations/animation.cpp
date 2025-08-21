@@ -26,6 +26,7 @@ Animation::Animation(Adafruit_SSD1306* _display, const unsigned char* _sprites[]
 Animation::~Animation() {
 }
 
+
 AnimationPlayback Animation::Play(uint16_t _color, float _deltaTime) {
   //Detiene la ejecucion
   if (forceStop) return AnimationPlayback(this);
@@ -38,7 +39,6 @@ AnimationPlayback Animation::Play(uint16_t _color, float _deltaTime) {
     hasCompleted = false;
     TriggerOnStart();
   }
-
   //Cambio de frame
   if (time >= frameInterval) {
     time = 0;
@@ -55,19 +55,19 @@ AnimationPlayback Animation::Play(uint16_t _color, float _deltaTime) {
         if (!hasCompleted) {
           hasCompleted = true;
           TriggerOnComplete();
-          TriggerOnAfterOnComplete();
+          TriggerOnAfterComplete();
         }
       }
     }
   }
-
   time = time + _deltaTime;
   //Este display es un puntero del "display" en el .ino. "->" hace que se trabaje con el "display" real y no con el puntero
   display->drawBitmap(posX, posY, GetCurrentSprite(), GetWidth(), GetHeight(), _color);
-
   if (!areEventsLoaded) areEventsLoaded = true;
   return AnimationPlayback(this);
 }
+
+
 
 void Animation::Stop() {
   time = 0;
@@ -76,6 +76,7 @@ void Animation::Stop() {
   hasCompleted = false;
   areEventsLoaded = false;
   forceStop = true;
+  ClearEvents();
 }
 
 void Animation::Pause() {
@@ -105,26 +106,31 @@ void Animation::SetCenterMode(bool _val) {
   isCenterMode = _val;
 }
 
+void Animation::ClearEvents() {
+  SetOnStart([](){});
+  SetOnLoop([](){});
+  SetOnComplete([](){});
+  SetOnFrameChange([](int){});
+  SetOnAfterComplete([](){});
+}
+
 int Animation::GetWidth() {
   return width;
 }
-
 int Animation::GetHeight() {
   return height;
 }
-
 int Animation::GetPosX() {
   return posX;
 }
-
 int Animation::GetPosY() {
   return posY;
 }
 
+
 const unsigned char* Animation::GetCurrentSprite() {
   return sprites[currentFrame];
 }
-
 const unsigned char* Animation::GetSprite(int index) {
   return sprites[index];
 }
@@ -154,8 +160,8 @@ void Animation::TriggerOnLoop() {
   }
 }
 
-void Animation::TriggerOnAfterOnComplete() {
-  if (onAfterOnCompleteCallback) {
-    onAfterOnCompleteCallback();
+void Animation::TriggerOnAfterComplete() {
+  if (onAfterCompleteCallback) {
+    onAfterCompleteCallback();
   }
 }

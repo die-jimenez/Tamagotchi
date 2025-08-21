@@ -28,19 +28,17 @@ public:
   //Update ejecuta todas las animaciones guardadas. Debe estar siempre activo en el Loop
   void Update(float _deltaTime);
 
-  void Add(Animation* _anim);
-  void Remove(Animation* _anim);
-  void RemoveAll();
-  
-  //Play se utiliza para reproducir la aniamcion, si esta !!!pausada o detenida!!!
-  void PlayAll();
   void Play(Animation* _anim);
+  void Stop(Animation* _anim);
+  void Remove(Animation* _anim);
+  void Continue(Animation* _anim);
+  void RemoveAll();  
+  void ContinueAll();
+  void StopAll();
   //PlayOneShot ejecuta la animacion una vez y luego se borra de la memoria del manager
   void PlayOneShot(Animation* _anim);
 
 
-  void StopAnimation(Animation* _anim);
-  void StopAll();
 
   bool isEmptyAnimation(int index);
   void PrintAnimationsSpaces();

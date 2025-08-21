@@ -42,18 +42,20 @@ void setup() {
 
 
   //---> Aquí ya se pueden sumar las animaciones iniciales
-  egg_idle.SetPosition(SCREEN_WIDTH / 2, 0);
   //animationManager.Add(&egg_idle);
   //animationManager.Remove(&egg_idle);
   //animationManager.PlayOneShot(&eye);
 
   //Secuencia de ejemplos
-
+  eye.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
   animationManager.PlayOneShot(&eye);
   eye.SetOnComplete([]() {
-    animationManager.Add(&egg_idle);
+    egg_idle.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    animationManager.Play(&egg_idle);
   });
 }
+
+
 
 void loop() {
   deltaTime.Run();
@@ -62,8 +64,13 @@ void loop() {
   buttonL.Update([]() {
     Serial.println("L");
     egg_idle.Stop();
-    animationManager.PlayOneShot(&egg_open);
-    humanTime = 0;
+    egg_open.SetLoop(false);
+    egg_open.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    animationManager.Play(&egg_open);
+    egg_open.SetOnComplete([]() {
+      display.setCursor(0, 0);
+      display.print("Hola OLED!");
+    });
   });
   buttonC.Update([]() {
     Serial.println("C");
@@ -71,24 +78,6 @@ void loop() {
   buttonR.Update([]() {
     Serial.println("R");
   });
-
-  //eye.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-  //eye.Play(WHITE, deltaTime.Get());
-  // egg_idle.Play(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, WHITE, deltaTime.Get())
-  //   .OnStart([]() {
-  //     Serial.println("Inicio");
-  //   })
-  //   .OnLoop([]() {
-  //     Serial.println("Loop");
-  //   })
-  //   .OnComplete([]() {
-  //     Serial.println("Termino");
-  //   });
-  // ;
-
-  // display.fillRect(100, 10, 20, 15, SSD1306_WHITE);
-  // display.fillCircle(70, 40, 10, SSD1306_WHITE);
-
 
   //ApplyGlobalDither();
   animationManager.Update(deltaTime.Get());
@@ -104,6 +93,8 @@ void OLEDInit() {
     for (;;)
       ;  // Don't proceed, loop forever
   }
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
   display.clearDisplay();
 }
 
@@ -119,13 +110,7 @@ void ApplyGlobalDither() {
 }
 
 
-
-
-
-
-
-
-void drawGreyCircle(int x, int y, int radio, uint8_t brightness) {
+void DrawCircle(int x, int y, int radio, uint8_t brightness) {
   for (int i = -radio; i <= radio; i++) {
     for (int j = -radio; j <= radio; j++) {
       if (i * i + j * j <= radio * radio) {
@@ -139,11 +124,6 @@ void drawGreyCircle(int x, int y, int radio, uint8_t brightness) {
     }
   }
 }
-
-
-
-
-
 
 
 void funcionesDibujado() {

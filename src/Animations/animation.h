@@ -42,7 +42,7 @@ private:
   std::function<void()> onStartCallback;
   std::function<void(int)> onFrameChangeCallback;
   std::function<void()> onLoopCallback;
-  std::function<void()> onAfterOnCompleteCallback;
+  std::function<void()> onAfterCompleteCallback;
 
 
   //Triggers de eventos
@@ -51,7 +51,7 @@ private:
   void TriggerOnFrameChange(int frame);
   void TriggerOnLoop();
   //Solo se utiliza para el PlayOneShot del aniamtionManager
-  void TriggerOnAfterOnComplete();
+  void TriggerOnAfterComplete();
 
 
 
@@ -72,6 +72,7 @@ public:
   void SetLoop(bool _isLoop);
   void SetCenterMode(bool _val);
   void SetPosition(int _x, int _y);
+  void ClearEvents();
 
   // Getters
   int GetWidth();
@@ -95,8 +96,8 @@ public:
     onLoopCallback = action;
   }
   //Solo se utiliza para el PlayOneShot del aniamtionManager
-  void SetAfterOnComplete(std::function<void()> action) {
-    onAfterOnCompleteCallback = action;
+  void SetOnAfterComplete(std::function<void()> action) {
+    onAfterCompleteCallback = action;
   }
 };
 
@@ -146,9 +147,9 @@ public:
   }
 
     // Método para asignar callback cuando se completa la animación
-  AnimationPlayback& AfterOnComplete(std::function<void()> action) {
+  AnimationPlayback& onAfterComplete(std::function<void()> action) {
     if (animation) {
-      animation->SetAfterOnComplete(action);
+      animation->SetOnAfterComplete(action);
     }
     return *this;
   }
