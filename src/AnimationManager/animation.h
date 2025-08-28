@@ -10,7 +10,6 @@
 
 #include <Arduino.h>
 #include <Adafruit_SSD1306.h>
-#include "../DeltaTime/DeltaTime.h"
 //Lo declaro antes para poder usarlo en la Clase "Animacion"
 class AnimationPlayback;
 

@@ -16,8 +16,7 @@ public:
     ~Button();
 
     void Init();
-    void Press(std::function<void()> _action);
-    void Update(std::function<void()> _action);  
+    void PressEvent(std::function<void()> _action);  
     bool isPressed();
     bool Read();
 };

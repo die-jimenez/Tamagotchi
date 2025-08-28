@@ -2,9 +2,13 @@
 #include <functional>  // Necesario para std::function
 
 String state = "credits"
-  //egg_screen
+  //wainting
+  //creepy_eye
+  //egg_close
+  //egg_open
+  //main_menu
   ;
-
+String lastState;
 
 //Libreria de dibujo: Codigo extraido de: https://github.com/FluxGarage/RoboEyes
 #include <Adafruit_SSD1306.h>
@@ -31,6 +35,9 @@ Animation egg_idle(&display, anim_egg_idle, egg_idle_length, egg_idle_framerate,
 Animation egg_open(&display, anim_egg_open, egg_open_length, egg_open_framerate, egg_width, egg_height);
 Animation eye(&display, anim_eye, eye_length, eye_framerate, eye_width, eye_height);
 
+#include "src/Timer/Timer.h"
+Timer timerAnimation;
+
 
 
 void setup() {
@@ -46,17 +53,9 @@ void setup() {
 
 
   //---> Aquí ya se pueden sumar las animaciones iniciales
-  //animationManager.Add(&egg_idle);
+  //animationManager.Play(&egg_idle);
   //animationManager.Remove(&egg_idle);
   //animationManager.PlayOneShot(&eye);
-
-  //Secuencia de ejemplos
-  eye.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-  animationManager.PlayOneShot(&eye);
-  eye.SetOnComplete([]() {
-    egg_idle.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    animationManager.Play(&egg_idle);
-  });
 }
 
 
@@ -65,49 +64,101 @@ void loop() {
   deltaTime.Run();
   display.clearDisplay();
 
+  if (state == "waiting") {
+  }
+
   if (state == "credits") {
     DrawTextInRect("Creado por: ", 0, 0, 1);
     display.setCursor(0, 15);
     display.print("Diego Jimenez");
     display.display();
-    delay(5000);
+    delay(1000);
+
+    //Pantalla en negro
     display.clearDisplay();
-    delay(3000);
-    state = "start";
+    delay(1000);
+
+    //Animación del ojo
+    ChangeState("waiting");
+    eye.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    animationManager.PlayOneShot(&eye);
+    eye.SetOnComplete([] {
+      timerAnimation.SetDuration(1);
+      timerAnimation.SetEvent([] {
+        ChangeState("egg_close");
+      });
+    });
+  }
+
+  if (state == "egg_close") {
+    egg_idle.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    egg_idle.Play(WHITE, deltaTime.Get());
+    buttonL.PressEvent([]() {
+      OpenEgg();
+    });
+    buttonC.PressEvent([]() {
+      OpenEgg();
+    });
+    buttonR.PressEvent([]() {
+      OpenEgg();
+    });
+  }
+
+  if (state == "egg_open") {
+    DrawCenteredText("PIPO", SCREEN_WIDTH / 2, 20);
+    buttonL.PressEvent([]() {
+      GoToMainMenu();
+    });
+    buttonC.PressEvent([]() {
+      GoToMainMenu();
+    });
+    buttonR.PressEvent([]() {
+      GoToMainMenu();
+    });
   }
 
 
 
 
 
-
-
-
-
-  buttonL.Update([]() {
-    Serial.println("L");
-    egg_idle.Stop();
-    egg_open.SetLoop(false);
-    egg_open.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    animationManager.Play(&egg_open);
-    egg_open.SetOnComplete([]() {
-      display.setCursor(0, 0);
-      display.print("Hola OLED!");
-    });
-  });
-  buttonC.Update([]() {
-    Serial.println("C");
-  });
-  buttonR.Update([]() {
-    Serial.println("R");
-  });
-
   //ApplyGlobalDither();
+  //DrawGrilla();
+  timerAnimation.Update(deltaTime.Get());
   animationManager.Update(deltaTime.Get());
   humanTime = humanTime + deltaTime.Get();
   display.display();
   delay(10);
 }
+
+
+
+//FUNCIONES DE MAQUINA DE ESTADOS -----------------------------------------------------------------------------
+void ChangeState(String _newState) {
+  lastState = state;
+  state = _newState;
+}
+
+void OpenEgg() {
+  egg_idle.Stop();
+  egg_open.SetLoop(false);
+  egg_open.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+  animationManager.Play(&egg_open);
+  egg_open.SetOnComplete([] {
+    ChangeState("egg_open");
+  });
+}
+
+void GoToMainMenu() {
+  animationManager.StopAll();
+  ChangeState("main_menu");
+}
+
+
+
+//--------------------------------------------------------------------------------------------------------------
+
+
+
 
 
 void OLEDInit() {
@@ -121,7 +172,6 @@ void OLEDInit() {
   display.clearDisplay();
 }
 
-
 void ApplyGlobalDither() {
   for (int y = 0; y < display.height(); y++) {
     for (int x = 0; x < display.width(); x++) {
@@ -132,6 +182,17 @@ void ApplyGlobalDither() {
   }
 }
 
+void DrawGrilla() {
+  // Líneas verticales
+  for (int x = 0; x <= SCREEN_WIDTH; x += 20) {
+    display.drawLine(x, 0, x, SCREEN_HEIGHT, WHITE);
+  }
+
+  // Líneas horizontales
+  for (int y = 0; y <= SCREEN_HEIGHT; y += 20) {
+    display.drawLine(0, y, SCREEN_WIDTH, y, WHITE);
+  }
+}
 
 void DrawCircle(int x, int y, int radio, uint8_t brightness) {
   for (int i = -radio; i <= radio; i++) {
@@ -162,6 +223,21 @@ void DrawTextInRect(String _text, int _posX, int _posY, float _textSize) {
   display.setCursor(_posX, _posY);
   display.setTextSize(_textSize);
   display.print(_text);
+}
+
+void DrawCenteredText(const char* text, int posX, int posY) {
+  int16_t x1, y1;
+  uint16_t w, h;
+
+  // Obtiene las dimensiones del texto
+  display.getTextBounds(text, 0, 0, &x1, &y1, &w, &h);
+
+  // Ajusta posición para que el centro del texto coincida con posX, posY
+  int16_t x = posX - (w / 2);
+  int16_t y = posY - (h / 2);
+
+  display.setCursor(x, y);
+  display.print(text);
 }
 
 void funcionesDibujado() {

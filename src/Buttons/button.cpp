@@ -14,13 +14,7 @@ void Button::Init() {
   pinMode(pinButton, INPUT_PULLUP);
 }
 
-void Button::Press(std::function<void()> _action) {
-  Serial.printf("El boton %s direction");
-  Serial.println(" fue presionado");
-  _action();
-}
-
-void Button::Update(std::function<void()> _action) {
+void Button::PressEvent(std::function<void()> _action) {
   if (isPressed()) {
     _action();
   } 

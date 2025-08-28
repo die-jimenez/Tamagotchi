@@ -1,5 +1,4 @@
 #include "animation.h"
-#include "../DeltaTime/DeltaTime.h"
 
 Animation::Animation(Adafruit_SSD1306* _display, const unsigned char* _sprites[], int _frameCount, int _frameRate, int _width, int _height) {
   display = _display;
