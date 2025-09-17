@@ -26,17 +26,28 @@ Button buttonL(7, "LEFT");    //0
 Button buttonC(6, "CENTER");  //1
 Button buttonR(5, "RIGHT");   //3 y... 4
 
+#include "src/Timer/Timer.h"
+Timer timerAnimation;
+
+//Animaciones
 #include "src/AnimationManager/animationManager.h"
 #include "src/AnimationManager/animation.h"
+//--huevo
 #include "src/Animations/egg.h"
 #include "src/Animations/eye.h"
 AnimationManager animationManager(&display);
 Animation egg_idle(&display, anim_egg_idle, egg_idle_length, egg_idle_framerate, egg_width, egg_height);
 Animation egg_open(&display, anim_egg_open, egg_open_length, egg_open_framerate, egg_width, egg_height);
 Animation eye(&display, anim_eye, eye_length, eye_framerate, eye_width, eye_height);
+//--doggo
+#include "src/Animations/doggo.h"
+Animation dog_walk(&display, anim_dog_walk, dog_walk_length, dog_walk_framerate, dog_width, dog_height);
+//--menu
+#include "src/Animations/menu.h"
+Animation menu_fork(&display, anim_fork, fork_length, 1, menu_icon_width, menu_icon_height);
+Animation menu_play(&display, anim_play, play_length, 1, menu_icon_width, menu_icon_height);
+Animation menu_dialog(&display, anim_dialog, dialog_length, 1, menu_icon_width, menu_icon_height);
 
-#include "src/Timer/Timer.h"
-Timer timerAnimation;
 
 
 
@@ -68,58 +79,21 @@ void loop() {
   }
 
   if (state == "credits") {
-    DrawTextInRect("Creado por: ", 0, 0, 1);
-    display.setCursor(0, 15);
-    display.print("Diego Jimenez");
-    display.display();
-    delay(1000);
-
-    //Pantalla en negro
-    display.clearDisplay();
-    delay(1000);
-
-    //Animación del ojo
-    ChangeState("waiting");
-    eye.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    animationManager.PlayOneShot(&eye);
-    eye.SetOnComplete([] {
-      timerAnimation.SetDuration(1);
-      timerAnimation.SetEvent([] {
-        ChangeState("egg_close");
-      });
-    });
+    Credits_SCREEN();
   }
 
   if (state == "egg_close") {
-    egg_idle.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    egg_idle.Play(WHITE, deltaTime.Get());
-    buttonL.PressEvent([]() {
-      OpenEgg();
-    });
-    buttonC.PressEvent([]() {
-      OpenEgg();
-    });
-    buttonR.PressEvent([]() {
-      OpenEgg();
-    });
+    EggClose_SCREEN();
   }
 
   if (state == "egg_open") {
-    DrawCenteredText("PIPO", SCREEN_WIDTH / 2, 20);
-    buttonL.PressEvent([]() {
-      GoToMainMenu();
-    });
-    buttonC.PressEvent([]() {
-      GoToMainMenu();
-    });
-    buttonR.PressEvent([]() {
-      GoToMainMenu();
-    });
+    EggOpen_SCREEN();
   }
 
-
-
-
+  if (state == "main_menu") {
+    Menu_SCREEN();
+    DogWalk();
+  }
 
   //ApplyGlobalDither();
   //DrawGrilla();
@@ -129,6 +103,96 @@ void loop() {
   display.display();
   delay(10);
 }
+
+
+
+
+
+void Credits_SCREEN() {
+  DrawTextInRect("Creado por: ", 0, 0, 1);
+  display.setCursor(0, 15);
+  display.print("Diego Jimenez");
+  display.display();
+  delay(1000);
+
+  //Pantalla en negro
+  display.clearDisplay();
+  delay(1000);
+
+  //Animación del ojo
+  ChangeState("waiting");
+  eye.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+  animationManager.PlayOneShot(&eye);
+  eye.SetOnComplete([] {
+    timerAnimation.SetDuration(1);
+    timerAnimation.SetEvent([] {
+      ChangeState("egg_close");
+    });
+  });
+}
+
+void EggClose_SCREEN() {
+  egg_idle.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+  egg_idle.Play(WHITE, deltaTime.Get());
+  buttonL.PressEvent([]() {
+    OpenEgg();
+  });
+  buttonC.PressEvent([]() {
+    OpenEgg();
+  });
+  buttonR.PressEvent([]() {
+    OpenEgg();
+  });
+}
+
+void EggOpen_SCREEN() {
+  DrawCenteredText("PIPO", SCREEN_WIDTH / 2, 20);
+  buttonL.PressEvent([]() {
+    GoToMainMenu();
+  });
+  buttonC.PressEvent([]() {
+    GoToMainMenu();
+  });
+  buttonR.PressEvent([]() {
+    GoToMainMenu();
+  });
+}
+
+void Menu_SCREEN() {
+  menu_fork.SetLoop(true);
+  menu_fork.SetPosition(8, 10);
+  menu_fork.Play(WHITE, deltaTime.Get());
+
+  menu_play.SetLoop(true);
+  menu_play.SetPosition(44, 10);
+  menu_play.Play(WHITE, deltaTime.Get());
+
+  menu_dialog.SetLoop(true);
+  menu_dialog.SetPosition(80, 10);
+  menu_dialog.Play(WHITE, deltaTime.Get());
+
+  menu_fork.SetLoop(true);
+  menu_fork.SetPosition(116, 10);
+  menu_fork.Play(WHITE, deltaTime.Get());
+}
+
+void DogWalk() {
+  dog_walk.SetLoop(true);
+  dog_walk.SetPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT-26);
+  dog_walk.Play(WHITE, deltaTime.Get());
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
