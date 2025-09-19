@@ -10,6 +10,7 @@
 
 #include <Arduino.h>
 #include <Adafruit_SSD1306.h>
+#include "InterpolationLib.h"
 //Lo declaro antes para poder usarlo en la Clase "Animacion"
 class AnimationPlayback;
 
@@ -36,12 +37,21 @@ private:
   bool areEventsLoaded = false;
   bool isCenterMode = true;
 
+  //Interpolación
+  bool isMoving;
+  float startPosX, startPosY;
+  float targetPosX, targetPosY;
+  unsigned long moveStartTime;
+  unsigned long moveDuration;
+  int interpolationType;  // 0=Linear, 1=Smooth, 2=Spline
+
   // Callbacks para eventos
   std::function<void()> onCompleteCallback;
   std::function<void()> onStartCallback;
   std::function<void(int)> onFrameChangeCallback;
   std::function<void()> onLoopCallback;
   std::function<void()> onAfterCompleteCallback;
+  std::function<void()> onMoveCompleteCallback;
 
 
   //Triggers de eventos
@@ -51,6 +61,8 @@ private:
   void TriggerOnLoop();
   //Solo se utiliza para el PlayOneShot del aniamtionManager
   void TriggerOnAfterComplete();
+  //Se utiliza en la interpolacion
+  void TriggerOnMoveComplete();
 
 
 
@@ -72,6 +84,12 @@ public:
   void SetCenterMode(bool _val);
   void SetPosition(int _x, int _y);
   void ClearEvents();
+
+  // Interpolación
+  void MoveTo(float endX, float endY, unsigned long duration, int type = 1);
+  void UpdateMovement(unsigned long currentTime);
+  bool IsMoving() const;
+
 
   // Getters
   int GetWidth();
@@ -98,6 +116,9 @@ public:
   void SetOnAfterComplete(std::function<void()> action) {
     onAfterCompleteCallback = action;
   }
+  void SetOnMoveComplete(std::function<void()> action) {
+    onMoveCompleteCallback = action;
+  };
 };
 
 
@@ -145,10 +166,17 @@ public:
     return *this;
   }
 
-    // Método para asignar callback cuando se completa la animación
+  // Método para asignar callback cuando se completa la animación
   AnimationPlayback& onAfterComplete(std::function<void()> action) {
     if (animation) {
       animation->SetOnAfterComplete(action);
+    }
+    return *this;
+  }
+
+  AnimationPlayback& OnMoveComplete(std::function<void()> action) {
+    if (animation) {
+      animation->SetOnMoveComplete(action);
     }
     return *this;
   }

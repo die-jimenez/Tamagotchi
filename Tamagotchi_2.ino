@@ -1,11 +1,12 @@
 #include <Arduino.h>
 #include <functional>  // Necesario para std::function
+#include "screensBehavior.h"
 
 String state = "credits"
   //wainting
   //creepy_eye
-  //egg_close
-  //egg_open
+  //egg_closed
+  //egg_opened
   //main_menu
   ;
 String lastState;
@@ -42,6 +43,9 @@ Animation eye(&display, anim_eye, eye_length, eye_framerate, eye_width, eye_heig
 //--doggo
 #include "src/Animations/doggo.h"
 Animation dog_walk(&display, anim_dog_walk, dog_walk_length, dog_walk_framerate, dog_width, dog_height);
+Animation dog_bite(&display, anim_dog_bite, dog_bite_length, dog_bite_framerate, dog_width, dog_height);
+Animation dog_run(&display, anim_dog_run, dog_run_length, dog_run_framerate, dog_width, dog_height);
+
 //--menu
 #include "src/Animations/menu.h"
 Animation menu_fork(&display, anim_fork, fork_length, 1, menu_icon_width, menu_icon_height);
@@ -82,12 +86,16 @@ void loop() {
     Credits_SCREEN();
   }
 
-  if (state == "egg_close") {
-    EggClose_SCREEN();
+  if (state == "egg_closed") {
+    EggClosed_SCREEN();
   }
 
-  if (state == "egg_open") {
-    EggOpen_SCREEN();
+  if (state == "egg_opened") {
+    EggOpened_SCREEN();
+  }
+
+  if (state == "preload_main_menu") {
+    Preload_Menu_SCREEN();
   }
 
   if (state == "main_menu") {
@@ -107,31 +115,9 @@ void loop() {
 
 
 
+//Funciones que dibujan e implementan toda la lógica de cada pantalla
 
-void Credits_SCREEN() {
-  DrawTextInRect("Creado por: ", 0, 0, 1);
-  display.setCursor(0, 15);
-  display.print("Diego Jimenez");
-  display.display();
-  delay(1000);
-
-  //Pantalla en negro
-  display.clearDisplay();
-  delay(1000);
-
-  //Animación del ojo
-  ChangeState("waiting");
-  eye.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-  animationManager.PlayOneShot(&eye);
-  eye.SetOnComplete([] {
-    timerAnimation.SetDuration(1);
-    timerAnimation.SetEvent([] {
-      ChangeState("egg_close");
-    });
-  });
-}
-
-void EggClose_SCREEN() {
+void EggClosed_SCREEN() {
   egg_idle.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
   egg_idle.Play(WHITE, deltaTime.Get());
   buttonL.PressEvent([]() {
@@ -145,7 +131,7 @@ void EggClose_SCREEN() {
   });
 }
 
-void EggOpen_SCREEN() {
+void EggOpened_SCREEN() {
   DrawCenteredText("PIPO", SCREEN_WIDTH / 2, 20);
   buttonL.PressEvent([]() {
     GoToMainMenu();
@@ -156,6 +142,10 @@ void EggOpen_SCREEN() {
   buttonR.PressEvent([]() {
     GoToMainMenu();
   });
+}
+
+void Preload_Menu_SCREEN() {
+  ChangeState("main_menu");
 }
 
 void Menu_SCREEN() {
@@ -176,30 +166,20 @@ void Menu_SCREEN() {
   menu_fork.Play(WHITE, deltaTime.Get());
 }
 
-void DogWalk() {
-  dog_walk.SetLoop(true);
-  dog_walk.SetPosition(SCREEN_WIDTH/2, SCREEN_HEIGHT-26);
-  dog_walk.Play(WHITE, deltaTime.Get());
-}
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-//FUNCIONES DE MAQUINA DE ESTADOS -----------------------------------------------------------------------------
+//Funciones para !!!COMPLEMENTAR!!! la maquina de estados -----------------------------------------------------------------------------
 void ChangeState(String _newState) {
+  animationManager.StopAll();
   lastState = state;
   state = _newState;
+}
+
+void GoToMainMenu() {
+  //La idea es siempre pasar por el preload para cargar eventos o animaciones
+  ChangeState("preload_main_menu");
 }
 
 void OpenEgg() {
@@ -208,18 +188,22 @@ void OpenEgg() {
   egg_open.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
   animationManager.Play(&egg_open);
   egg_open.SetOnComplete([] {
-    ChangeState("egg_open");
+    ChangeState("egg_opened");
   });
 }
 
-void GoToMainMenu() {
-  animationManager.StopAll();
-  ChangeState("main_menu");
+void DogWalk() {
+  dog_walk.SetLoop(true);
+  dog_walk.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 26);
+  dog_walk.Play(WHITE, deltaTime.Get());
+
+  dog_run.SetLoop(true);
+
+  //dog_run.SetPosition(30, SCREEN_HEIGHT - 26);
+  dog_run.Play(WHITE, deltaTime.Get());
 }
 
 
-
-//--------------------------------------------------------------------------------------------------------------
 
 
 
