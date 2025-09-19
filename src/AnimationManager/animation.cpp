@@ -71,7 +71,7 @@ AnimationPlayback Animation::Play(uint16_t _color, float _deltaTime) {
   }
   time = time + _deltaTime;
   //Actualiza el movimiento de la interpolacion
-  UpdateMovement(millis());
+  //UpdateMovement(millis());
   //Este display es un puntero del "display" en el .ino. "->" hace que se trabaje con el "display" real y no con el puntero
   display->drawBitmap(posX, posY, GetCurrentSprite(), GetWidth(), GetHeight(), _color);
   if (!areEventsLoaded) areEventsLoaded = true;
@@ -149,77 +149,77 @@ const unsigned char* Animation::GetSprite(int index) {
 
 
 //Interpolacion -----------------------------------------------------
-void Animation::MoveTo(float endX, float endY, unsigned long duration, int type) {
-  if (duration == 0) {
-    // Movimiento instantáneo
-    SetPosition(endX, endY);
-    return;
-  }
+// void Animation::MoveTo(float endX, float endY, unsigned long duration, int type) {
+//   if (duration == 0) {
+//     // Movimiento instantáneo
+//     SetPosition(endX, endY);
+//     return;
+//   }
 
-  // Configurar interpolación
-  startPosX = isCenterMode ? posX + GetWidth() / 2 : posX;
-  startPosY = isCenterMode ? posY + GetHeight() / 2 : posY;
-  targetPosX = endX;
-  targetPosY = endY;
-  moveStartTime = millis();
-  moveDuration = duration;
-  interpolationType = type;
-  isMoving = true;
-}
+//   // Configurar interpolación
+//   startPosX = isCenterMode ? posX + GetWidth() / 2 : posX;
+//   startPosY = isCenterMode ? posY + GetHeight() / 2 : posY;
+//   targetPosX = endX;
+//   targetPosY = endY;
+//   moveStartTime = millis();
+//   moveDuration = duration;
+//   interpolationType = type;
+//   isMoving = true;
+// }
 
-// AGREGAR ESTA LÍNEA ANTES DE DIBUJAR
-void Animation::UpdateMovement(unsigned long currentTime) {
-  if (!isMoving) return;
+// // AGREGAR ESTA LÍNEA ANTES DE DIBUJAR
+// void Animation::UpdateMovement(unsigned long currentTime) {
+//   if (!isMoving) return;
 
-  unsigned long elapsed = currentTime - moveStartTime;
+//   unsigned long elapsed = currentTime - moveStartTime;
 
-  if (elapsed >= moveDuration) {
-    // Movimiento completado
-    SetPosition(targetPosX, targetPosY);
-    isMoving = false;
+//   if (elapsed >= moveDuration) {
+//     // Movimiento completado
+//     SetPosition(targetPosX, targetPosY);
+//     isMoving = false;
 
-    // Disparar callback si existe
-    if (onMoveCompleteCallback) {
-      onMoveCompleteCallback();
-    }
-    return;
-  }
+//     // Disparar callback si existe
+//     if (onMoveCompleteCallback) {
+//       onMoveCompleteCallback();
+//     }
+//     return;
+//   }
 
-  // Calcular posición interpolada
-  double xValues[2] = { 0, (double)moveDuration };
-  double yValuesX[2] = { (double)startPosX, (double)targetPosX };
-  double yValuesY[2] = { (double)startPosY, (double)targetPosY };
+//   // Calcular posición interpolada
+//   double xValues[2] = { 0, (double)moveDuration };
+//   double yValuesX[2] = { (double)startPosX, (double)targetPosX };
+//   double yValuesY[2] = { (double)startPosY, (double)targetPosY };
 
-  float newX, newY;
+//   float newX, newY;
 
-  switch (interpolationType) {
-    case 0:  // Linear
-      newX = (float)Interpolation::Linear(xValues, yValuesX, 2, (double)elapsed, false);
-      newY = (float)Interpolation::Linear(xValues, yValuesY, 2, (double)elapsed, false);
-      break;
+//   switch (interpolationType) {
+//     case 0:  // Linear
+//       newX = (float)Interpolation::Linear(xValues, yValuesX, 2, (double)elapsed, false);
+//       newY = (float)Interpolation::Linear(xValues, yValuesY, 2, (double)elapsed, false);
+//       break;
 
-    case 1:  // Smooth (por defecto)
-      newX = (float)Interpolation::SmoothStep(xValues, yValuesX, 2, (double)elapsed);
-      newY = (float)Interpolation::SmoothStep(xValues, yValuesY, 2, (double)elapsed);
-      break;
+//     case 1:  // Smooth (por defecto)
+//       newX = (float)Interpolation::SmoothStep(xValues, yValuesX, 2, (double)elapsed);
+//       newY = (float)Interpolation::SmoothStep(xValues, yValuesY, 2, (double)elapsed);
+//       break;
 
-    case 2:  // Spline
-      newX = (float)Interpolation::CatmullSpline(xValues, yValuesX, 2, (double)elapsed);
-      newY = (float)Interpolation::CatmullSpline(xValues, yValuesY, 2, (double)elapsed);
-      break;
+//     case 2:  // Spline
+//       newX = (float)Interpolation::CatmullSpline(xValues, yValuesX, 2, (double)elapsed);
+//       newY = (float)Interpolation::CatmullSpline(xValues, yValuesY, 2, (double)elapsed);
+//       break;
 
-    default:
-      newX = (float)Interpolation::SmoothStep(xValues, yValuesX, 2, (double)elapsed);
-      newY = (float)Interpolation::SmoothStep(xValues, yValuesY, 2, (double)elapsed);
-      break;
-  }
+//     default:
+//       newX = (float)Interpolation::SmoothStep(xValues, yValuesX, 2, (double)elapsed);
+//       newY = (float)Interpolation::SmoothStep(xValues, yValuesY, 2, (double)elapsed);
+//       break;
+//   }
 
-  SetPosition(newX, newY);
-}
+//   SetPosition(newX, newY);
+// }
 
-bool Animation::IsMoving() const {
-  return isMoving;
-}
+// bool Animation::IsMoving() const {
+//   return isMoving;
+// }
 
 
 

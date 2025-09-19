@@ -186,14 +186,15 @@ void Timer::SetTarget(String* variable, String value, float timerDuration) {
     SetTarget(variable, value);
 }
 
-// MÃ©todos para callback
-void Timer::SetEvent(void (*callback)()) {
+// Sin duración extra
+void Timer::SetEvent(std::function<void()> callback) {
     callbackFunction = callback;
     hasCallback = true;
     AutoStart();
 }
 
-void Timer::SetEvent(void (*callback)(), float timerDuration) {
+// Con duración
+void Timer::SetEvent(std::function<void()> callback, float timerDuration) {
     duration = timerDuration;
     SetEvent(callback);
 }
