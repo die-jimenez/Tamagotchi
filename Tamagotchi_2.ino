@@ -1,15 +1,42 @@
 #include <Arduino.h>
 #include <functional>  // Necesario para std::function
-
-//Contiene todas las variables que comparto con "screensBehavior" 
 #include "globals.h" 
 #include "stateMachine.h"
+
+//Lista de todos los estados
+String state = "credits"
+  //wainting
+  //credits
+  //egg_closed
+  //preload_main
+  //main
+  ; 
+String lastState;
+
+//Libreria de dibujo: Codigo extraido de: https://github.com/FluxGarage/RoboEyes
+#include <Adafruit_SSD1306.h>
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+#include "src/AnimationManager/animationManager.h"
+AnimationManager animationManager(&display);
+
+#include "src/Buttons/button.h"
+Button buttonL(7, "LEFT");    //0
+Button buttonC(6, "CENTER");  //1
+Button buttonR(5, "RIGHT");   //3 y... 4
+
+
+#include "src/DeltaTime/DeltaTime.h"
+DeltaTime deltaTime;
+float humanTime;
 
 //Scenes
 #include "src/Scenes/credits_scene.h"
 CreditsScene credits_scene(&display, &animationManager);
 #include "src/Scenes/main_scene.h"
 MainScene main_scene(&display, &animationManager);
+#include "src/Scenes/egg_scene.h"
+EggScene egg_scene(&display, &animationManager);
 
 
 
@@ -46,95 +73,25 @@ void loop() {
   }
 
   if (state == "egg_closed") {
-    EggClosed_SCREEN();
+    egg_scene.Update(deltaTime.Get());
   }
 
-  if (state == "egg_opened") {
-    EggOpened_SCREEN();
+  if (state == "preload_main") {
+    main_scene.PreloadMain();
   }
 
-  if (state == "preload_main_menu") {
-    Preload_Menu_SCREEN();
-  }
-
-  if (state == "main_menu") {
+  if (state == "main") {
     main_scene.Update(deltaTime.Get());
-    DogWalk();
   }
-
 
   //ApplyGlobalDither();
   //DrawGrilla();
-  timerAnimation.Update(deltaTime.Get());
+  //timerAnimation.Update(deltaTime.Get());
   animationManager.Update(deltaTime.Get());
   humanTime = humanTime + deltaTime.Get();
   display.display();
   delay(10);
 }
-
-
-
-
-//Funciones que dibujan e implementan toda la lógica de cada pantalla
-
-void EggClosed_SCREEN() {
-  egg_idle.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-  egg_idle.Play(WHITE, deltaTime.Get());
-  buttonL.PressEvent([]() {
-    OpenEgg();
-  });
-  buttonC.PressEvent([]() {
-    OpenEgg();
-  });
-  buttonR.PressEvent([]() {
-    OpenEgg();
-  });
-}
-
-void EggOpened_SCREEN() {
-  DrawCenteredText("PIPO", SCREEN_WIDTH / 2, 20);
-  buttonL.PressEvent([]() {
-    GoToMainMenu();
-  });
-  buttonC.PressEvent([]() {
-    GoToMainMenu();
-  });
-  buttonR.PressEvent([]() {
-    GoToMainMenu();
-  });
-}
-
-void Preload_Menu_SCREEN() {
-  ChangeState("main_menu");
-}
-
-
-
-
-//Funciones para !!!COMPLEMENTAR!!! la maquina de estados -----------------------------------------------------------------------------
-void OpenEgg() {
-  egg_idle.Stop();
-  egg_open.SetLoop(false);
-  egg_open.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-  animationManager.Play(&egg_open);
-  egg_open.SetOnComplete([] {
-    ChangeState("egg_opened");
-  });
-}
-
-void DogWalk() {
-  dog_walk.SetLoop(true);
-  dog_walk.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 26);
-  dog_walk.Play(WHITE, deltaTime.Get());
-
-  dog_run.SetLoop(true);
-
-  //dog_run.SetPosition(30, SCREEN_HEIGHT - 26);
-  dog_run.Play(WHITE, deltaTime.Get());
-}
-
-
-
 
 
 

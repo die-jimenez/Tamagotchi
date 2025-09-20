@@ -23,7 +23,7 @@ private:
 public:
   AnimationManager(Adafruit_SSD1306* _display);
   ~AnimationManager();
-
+  
   //Update ejecuta todas las animaciones guardadas. Debe estar siempre activo en el Loop
   void Update(float _deltaTime);
 

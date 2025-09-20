@@ -25,7 +25,6 @@ private:
   int frameRate;
   int currentFrame;
   float frameInterval;
-  Adafruit_SSD1306* display;
 
   //Variables
   int posX, posY;
@@ -69,11 +68,11 @@ private:
 
 
 public:
-  Animation(Adafruit_SSD1306* display, const unsigned char* _sprites[], int _frameCount, int _frameRate, int _width, int _height);
+  Animation(const unsigned char* _sprites[], int _frameCount, int _frameRate, int _width, int _height);
   ~Animation();
 
   //Devuelve un AnimacionPlayBack para poder agregar los eventos como DotWeen
-  AnimationPlayback Play(uint16_t color, float _deltaTime);
+  AnimationPlayback Play(Adafruit_SSD1306* display, uint16_t color, float _deltaTime);
 
   //Cambios en la ejecucion de la animacion
   //void Play(float _deltaTime);

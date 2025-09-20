@@ -84,9 +84,9 @@ const unsigned char egg_open_f4 [] PROGMEM = {
 	0x7f, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x7f, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x1f, 0xf8, 0x00, 0x00
 };
 //Idle
-const int egg_idle_length = 2;
-const int egg_idle_framerate = 1;
-const unsigned char* anim_egg_idle[egg_idle_length] = {
+const int egg_close_length = 2;
+const int egg_close_framerate = 1;
+const unsigned char* anim_egg_close[egg_close_length] = {
 	egg_open_f1,
 	egg_open_f2,
 };

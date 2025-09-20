@@ -1,17 +1,13 @@
 #ifndef STATEMACHINE_H
 #define STATEMACHINE_H
 
-//Lista de todos los estados
-String state = "credits"
-  //wainting
-  //creepy_eye
-  //egg_closed
-  //egg_opened
-  //main_menu
-  ;
+#include "src/AnimationManager/animationManager.h"
+// Declaración de solo referencias
+extern AnimationManager animationManager;
+extern String state;
+extern String lastState;
 
 
-String lastState;
 void ChangeState(String _newState) {
   animationManager.StopAll();
   lastState = state;
@@ -20,7 +16,7 @@ void ChangeState(String _newState) {
 
 void GoToMainMenu() {
   //La idea es siempre pasar por el preload para cargar eventos o animaciones
-  ChangeState("preload_main_menu");
+  ChangeState("preload_main");
 }
 
 

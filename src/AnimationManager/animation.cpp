@@ -1,7 +1,8 @@
 #include "animation.h"
+//El display lo paso por el método Play(), cual es molesto porque se repite mucho pero evito problema de 
+//referencias al inicializar el objeto, que empezo a ser complicado cuando crees las subclases de las escenas
 
-Animation::Animation(Adafruit_SSD1306* _display, const unsigned char* _sprites[], int _frameCount, int _frameRate, int _width, int _height) {
-  display = _display;
+Animation::Animation(const unsigned char* _sprites[], int _frameCount, int _frameRate, int _width, int _height) {
   sprites = _sprites;
   //Compruebo que los datos son correctos
   frameRate = _frameRate >= 0 ? _frameRate : 1;
@@ -36,7 +37,7 @@ Animation::~Animation() {
 }
 
 
-AnimationPlayback Animation::Play(uint16_t _color, float _deltaTime) {
+AnimationPlayback Animation::Play(Adafruit_SSD1306* display, uint16_t _color, float _deltaTime) {
   //Detiene la ejecucion
   if (forceStop) return AnimationPlayback(this);
   if (currentFrame >= frameCount) return AnimationPlayback(this);

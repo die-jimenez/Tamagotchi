@@ -7,14 +7,16 @@ AnimationManager::AnimationManager(Adafruit_SSD1306* _display) {
 AnimationManager::~AnimationManager() {
 }
 
-
 void AnimationManager::Update(float _deltaTime) {
   for (int i = 0; i < maxAnimations; i++) {
     if (isEmptyAnimation(i)) continue;
-    animations[i]->Play(WHITE, _deltaTime);
+    animations[i]->Play(display, WHITE, _deltaTime);
   }
 }
 
+//Reproducir las animaciones con este "Play" de animationManager se diferencia del "Play" de cada animacion
+//En que esta version debes ejecutarla a modo de evento, se ha de reproducir una sola vez, 
+//mientras que desde las animaciones, debe estar en el Update
 void AnimationManager::Play(Animation* _anim) {
   for (int i = 0; i < maxAnimations; i++) {
     if (!isEmptyAnimation(i)) continue;
