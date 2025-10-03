@@ -39,6 +39,8 @@ EggScene egg_scene(&display, &animationManager);
 MainScene main_scene(&display, &animationManager);
 #include "src/Scenes/game_scene.h"
 GameScene game_scene(&display, &animationManager);
+#include "src/Scenes/dialog_scene.h"
+DialogScene dialog_scene(&display, &animationManager);
 
 
 
@@ -95,7 +97,7 @@ void loop() {
   }
 
   if (state == "dialog") {
-    //main_scene.Update(deltaTime.Get());
+    dialog_scene.Update(deltaTime.Get());
   }
 
   //ApplyGlobalDither();
