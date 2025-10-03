@@ -13,8 +13,8 @@ public:
 
   virtual void Init();
   virtual void Update(float _deltaTime);
-  virtual void Render();
-  virtual void OnExit();
+  virtual void Render() {};
+  virtual void OnExit() {};
   virtual ~Scene() {};
 };
 

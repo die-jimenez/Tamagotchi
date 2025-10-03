@@ -33,10 +33,12 @@ float humanTime;
 //Scenes
 #include "src/Scenes/credits_scene.h"
 CreditsScene credits_scene(&display, &animationManager);
-#include "src/Scenes/main_scene.h"
-MainScene main_scene(&display, &animationManager);
 #include "src/Scenes/egg_scene.h"
 EggScene egg_scene(&display, &animationManager);
+#include "src/Scenes/main_scene.h"
+MainScene main_scene(&display, &animationManager);
+#include "src/Scenes/game_scene.h"
+GameScene game_scene(&display, &animationManager);
 
 
 
@@ -82,6 +84,18 @@ void loop() {
 
   if (state == "main") {
     main_scene.Update(deltaTime.Get());
+  }
+
+  if (state == "food") {
+    //main_scene.Update(deltaTime.Get());
+  }
+
+  if (state == "game") {
+    game_scene.Update(deltaTime.Get());
+  }
+
+  if (state == "dialog") {
+    //main_scene.Update(deltaTime.Get());
   }
 
   //ApplyGlobalDither();

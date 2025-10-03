@@ -15,7 +15,7 @@ void AnimationManager::Update(float _deltaTime) {
 }
 
 //Reproducir las animaciones con este "Play" de animationManager se diferencia del "Play" de cada animacion
-//En que esta version debes ejecutarla a modo de evento, se ha de reproducir una sola vez, 
+//En que esta version debes ejecutarla a modo de evento, se ha de reproducir una sola vez,
 //mientras que desde las animaciones, debe estar en el Update
 void AnimationManager::Play(Animation* _anim) {
   for (int i = 0; i < maxAnimations; i++) {

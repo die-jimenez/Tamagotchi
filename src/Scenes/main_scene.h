@@ -75,7 +75,7 @@ public:
 
   void DogWalking() {
     dog_walk.SetLoop(true);
-    dog_walk.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 26);
+    dog_walk.SetPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 15);
     dog_walk.Play(display, WHITE, deltaTime.Get());
 
     dog_run.SetLoop(true);
@@ -83,11 +83,11 @@ public:
     //dog_run.Play(display, WHITE, deltaTime.Get());
 
     dog_sit.SetLoop(true);
-    dog_sit.SetPosition((SCREEN_WIDTH / 2) + 40, SCREEN_HEIGHT - 26);
+    dog_sit.SetPosition((SCREEN_WIDTH / 2) + 40, SCREEN_HEIGHT - 15);
     dog_sit.Play(display, WHITE, deltaTime.Get());
 
     dog_eat.SetLoop(true);
-    dog_eat.SetPosition((SCREEN_WIDTH / 2) - 45, SCREEN_HEIGHT - 26);
+    dog_eat.SetPosition((SCREEN_WIDTH / 2) - 45, SCREEN_HEIGHT - 15);
     dog_eat.Play(display, WHITE, deltaTime.Get());
   }
 
@@ -107,6 +107,23 @@ public:
         return;
       }
       currentOption++;
+    });
+
+    buttonC.PressEvent([this]() {
+      switch (currentOption) {
+        case 0:
+          Serial.println("hola");
+          ChangeState("food");
+          break;
+        case 1:
+          ChangeState("game");
+          break;
+        case 2:
+          ChangeState("dialog");
+          break;
+        case 3:
+          break;
+      }
     });
   }
 

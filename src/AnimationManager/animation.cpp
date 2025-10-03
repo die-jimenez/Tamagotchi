@@ -100,6 +100,11 @@ void Animation::Continue() {
   forceStop = false;
 }
 
+void Animation::Restart() {
+    Stop();
+    forceStop = false;  // ← La diferencia clave con Stop()
+}
+
 void Animation::SetLoop(bool _isLoop) {
   isLoop = _isLoop;
 }

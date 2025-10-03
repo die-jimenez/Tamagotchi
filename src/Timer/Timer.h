@@ -15,7 +15,7 @@ enum TimerValueType {
 
 class Timer {
 private:
-  float duration;     // DuraciÃ³n del timer en segundos
+  float duration;     // Duracionn del timer en segundos
   float currentTime;  // Tiempo actual del timer
   bool isRunning;     // Si el timer estÃ¡ activo
   bool isFinished;    // Si el timer terminÃ³

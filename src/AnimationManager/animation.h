@@ -78,6 +78,7 @@ public:
   //void Play(float _deltaTime);
   void Stop();
   void Pause();
+  void Restart();
   void Continue();
   void SetLoop(bool _isLoop);
   void SetCenterMode(bool _val);
