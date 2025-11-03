@@ -82,13 +82,13 @@ public:
     //dog_run.SetPosition(30, SCREEN_HEIGHT - 26);
     //dog_run.Play(display, WHITE, deltaTime.Get());
 
-    dog_sit.SetLoop(true);
-    dog_sit.SetPosition((SCREEN_WIDTH / 2) + 40, SCREEN_HEIGHT - 15);
-    dog_sit.Play(display, WHITE, deltaTime.Get());
+    // dog_sit.SetLoop(true);
+    // dog_sit.SetPosition((SCREEN_WIDTH / 2) + 40, SCREEN_HEIGHT - 15);
+    // dog_sit.Play(display, WHITE, deltaTime.Get());
 
-    dog_eat.SetLoop(true);
-    dog_eat.SetPosition((SCREEN_WIDTH / 2) - 45, SCREEN_HEIGHT - 15);
-    dog_eat.Play(display, WHITE, deltaTime.Get());
+    // dog_eat.SetLoop(true);
+    // dog_eat.SetPosition((SCREEN_WIDTH / 2) - 45, SCREEN_HEIGHT - 15);
+    // dog_eat.Play(display, WHITE, deltaTime.Get());
   }
 
 
