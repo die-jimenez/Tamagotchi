@@ -1,8 +1,6 @@
 #ifndef GAME_SCENE_H
 #define GAME_SCENE_H
 
-//Codigo hecho con ChatGpt y luego modificado por mi
-
 #include "scene.h"
 #include "../Timer/Timer.h"
 
