@@ -1,5 +1,3 @@
-//Escrito por Claude
-
 #include "Timer.h"
 
 Timer::Timer() {
@@ -9,13 +7,11 @@ Timer::Timer() {
     isFinished = false;
     autoReset = false;
     
-    // Inicializar punteros como nullptr
     intPtr = nullptr;
     floatPtr = nullptr;
     boolPtr = nullptr;
     stringPtr = nullptr;
     
-    // Inicializar valores por defecto
     targetIntValue = 0;
     targetFloatValue = 0.0f;
     targetBoolValue = false;
@@ -49,7 +45,6 @@ Timer::Timer(float timerDuration) {
 }
 
 Timer::~Timer() {
-    // No necesitamos liberar memoria ya que no manejamos los punteros
 }
 
 void Timer::Update(float deltaTime) {
@@ -58,10 +53,9 @@ void Timer::Update(float deltaTime) {
     currentTime += deltaTime;
     
     if (currentTime >= duration) {
-        // El timer terminÃ³
         isFinished = true;
         
-        // Ejecutar la acciÃ³n segÃºn el tipo de dato
+        // Ejecutar evento segun tipo de dato
         switch (valueType) {
             case TIMER_INT:
                 if (intPtr != nullptr) {
@@ -134,7 +128,7 @@ void Timer::AutoStart() {
     isFinished = false;
 }
 
-// MÃ©todos para INT
+// Metodos para INT
 void Timer::SetTarget(int* variable, int value) {
     intPtr = variable;
     targetIntValue = value;
@@ -147,7 +141,7 @@ void Timer::SetTarget(int* variable, int value, float timerDuration) {
     SetTarget(variable, value);
 }
 
-// MÃ©todos para FLOAT
+// Metodos para FLOAT
 void Timer::SetTarget(float* variable, float value) {
     floatPtr = variable;
     targetFloatValue = value;
@@ -160,7 +154,7 @@ void Timer::SetTarget(float* variable, float value, float timerDuration) {
     SetTarget(variable, value);
 }
 
-// MÃ©todos para BOOL
+// Metodos para BOOL
 void Timer::SetTarget(bool* variable, bool value) {
     boolPtr = variable;
     targetBoolValue = value;
@@ -173,7 +167,7 @@ void Timer::SetTarget(bool* variable, bool value, float timerDuration) {
     SetTarget(variable, value);
 }
 
-// MÃ©todos para STRING
+// Metodos para STRING
 void Timer::SetTarget(String* variable, String value) {
     stringPtr = variable;
     targetStringValue = value;
